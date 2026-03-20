@@ -1,0 +1,94 @@
+// Include theming for Angular Material with `mat.theme()`.
+@use '@angular/material' as mat;
+
+@import "tailwindcss";
+
+// Import brand fonts matching the logo
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;500;600&display=swap');
+
+/* ─── Custom Theme Variables ─── */
+:root {
+  /* Lisa Bakes Brand Palette */
+  --color-primary: #9b595b;       /* Muted Rose / Deep Terracotta from "Lisa" */
+  --color-primary-dark: #7a4547;
+  --color-primary-light: #c27a7c;
+  
+  --color-accent: #d49a89;        /* Soft Peach from the whisk/spoon accents */
+  --color-accent-dark: #b57b6a;
+  --color-accent-light: #f0c4b6;
+  
+  --color-bg: #fdf0e9;            /* Light cream/peach from the logo background */
+  --color-bg-card: #ffffff;
+  --color-bg-dark: #2c1e1e;       
+  
+  --color-text: #2c1e1e;          /* Warm dark brown/charcoal for text */
+  --color-text-light: #756363;    /* Muted brown for subtext */
+  
+  --color-badge: #c27a7c;         
+  --color-success: #52b788;       /* Kept green for success notifications */
+  --color-star: #e8a365;          /* Warm gold for review stars */
+  
+  --shadow-card: 0 4px 20px rgba(44, 30, 30, 0.06);
+  --shadow-card-hover: 0 8px 32px rgba(44, 30, 30, 0.12);
+  --radius-card: 16px;
+  --radius-btn: 12px;
+
+  /* Font Families */
+  --font-brand-main: 'Playfair Display', serif;
+  --font-brand-script: 'Dancing Script', cursive;
+  --font-body: 'Poppins', sans-serif;
+}
+
+html {
+  min-height: 100vh;
+  @include mat.theme((color: (primary: mat.$azure-palette,
+        tertiary: mat.$blue-palette,
+      ),
+      typography: Poppins,
+      density: 0,
+    ));
+}
+
+body {
+  color-scheme: light;
+  background-color: var(--color-bg); /* Now uses the logo's soft peach */
+  color: var(--color-text);
+  font-family: var(--font-body);
+  margin: 0;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ─── Typography Utility Classes ─── */
+/* Use these in your HTML to instantly get the logo look */
+.font-brand {
+  font-family: var(--font-brand-main);
+}
+
+.font-script {
+  font-family: var(--font-brand-script);
+}
+
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary-light);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-primary);
+}

@@ -1,0 +1,201 @@
+<div class="profile-page max-w-5xl mx-auto px-4 py-8">
+  <!-- ═══════ Profile Header ═══════ -->
+  <div class="profile-header flex items-center gap-5 mb-8">
+    <div class="avatar">
+      <span class="avatar-initials">{{ getInitials(user.name) }}</span>
+    </div>
+    <div class="header-info">
+      <h1 class="profile-name">{{ user.name }}</h1>
+      <p class="profile-email">{{ user.email }}</p>
+      <span class="member-badge">
+        <span class="material-icons" style="font-size: 14px">star</span>
+        Member since {{ user.memberSince }}
+      </span>
+    </div>
+  </div>
+
+  <!-- ═══════ Tabs ═══════ -->
+  <div class="tab-bar flex gap-1 mb-6">
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'personal'"
+      (click)="switchTab('personal')"
+    >
+      <span class="material-icons">person</span> Personal Info
+    </button>
+    <button
+      class="tab-btn"
+      [class.active]="activeTab() === 'addresses'"
+      (click)="switchTab('addresses')"
+    >
+      <span class="material-icons">location_on</span> Addresses
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'orders'" (click)="switchTab('orders')">
+      <span class="material-icons">receipt_long</span> Order History
+    </button>
+  </div>
+
+  @if (savedMessage()) {
+    <div class="success-toast flex items-center gap-2">
+      <span class="material-icons">check_circle</span>
+      {{ savedMessage() }}
+    </div>
+  }
+
+  <!-- ═══════ Personal Info Tab ═══════ -->
+  @if (activeTab() === 'personal') {
+    <div class="tab-content card-panel">
+      <div class="panel-header flex items-center justify-between mb-4">
+        <h2 class="panel-title">Personal Information</h2>
+        @if (!editMode()) {
+          <button class="edit-btn" (click)="startEdit()">
+            <span class="material-icons">edit</span> Edit
+          </button>
+        }
+      </div>
+
+      @if (editMode()) {
+        <div class="form-grid">
+          <div class="form-group">
+            <label class="form-label">Full Name</label>
+            <input type="text" class="form-input" [(ngModel)]="editUser.name" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email Address</label>
+            <input type="email" class="form-input" [(ngModel)]="editUser.email" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone Number</label>
+            <input type="tel" class="form-input" [(ngModel)]="editUser.phone" />
+          </div>
+        </div>
+        <div class="form-actions flex gap-3 mt-4">
+          <button class="save-btn" (click)="saveProfile()">
+            <span class="material-icons">check</span> Save Changes
+          </button>
+          <button class="cancel-btn" (click)="cancelEdit()">Cancel</button>
+        </div>
+      } @else {
+        <div class="info-grid">
+          <div class="info-item">
+            <span class="info-label">Full Name</span>
+            <span class="info-value">{{ user.name }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Email Address</span>
+            <span class="info-value">{{ user.email }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Phone Number</span>
+            <span class="info-value">{{ user.phone }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Member Since</span>
+            <span class="info-value">{{ user.memberSince }}</span>
+          </div>
+        </div>
+      }
+    </div>
+  }
+
+  <!-- ═══════ Addresses Tab ═══════ -->
+  @if (activeTab() === 'addresses') {
+    <div class="tab-content">
+      <div class="addresses-grid flex flex-wrap gap-4">
+        @for (addr of addresses; track addr.id) {
+          <div class="address-card" [class.default]="addr.isDefault">
+            <div class="addr-header flex items-center justify-between mb-2">
+              <span class="addr-label">
+                <span class="material-icons" style="font-size: 16px">
+                  {{ addr.label === 'Home' ? 'home' : 'work' }}
+                </span>
+                {{ addr.label }}
+              </span>
+              @if (addr.isDefault) {
+                <span class="default-badge">Default</span>
+              }
+            </div>
+            <p class="addr-name">{{ addr.name }}</p>
+            <p class="addr-line">{{ addr.line1 }}</p>
+            <p class="addr-line">{{ addr.line2 }}</p>
+            <p class="addr-line">{{ addr.city }}, {{ addr.state }} - {{ addr.pincode }}</p>
+            <p class="addr-phone">
+              <span class="material-icons" style="font-size: 14px">phone</span>
+              {{ addr.phone }}
+            </p>
+            <div class="addr-actions flex gap-3 mt-3">
+              @if (!addr.isDefault) {
+                <button class="addr-action-btn" (click)="setDefaultAddress(addr.id)">
+                  Set Default
+                </button>
+              }
+              <button class="addr-action-btn delete" (click)="deleteAddress(addr.id)">
+                Delete
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- Add New Address Card -->
+        <div class="address-card add-new flex flex-col items-center justify-center">
+          <span class="material-icons add-icon">add_circle_outline</span>
+          <span class="add-text">Add New Address</span>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ═══════ Order History Tab ═══════ -->
+  @if (activeTab() === 'orders') {
+    <div class="tab-content">
+      @for (order of orders; track order.id) {
+        <div class="order-card" (click)="toggleOrder(order.id)">
+          <div class="order-header flex flex-wrap items-center justify-between gap-3">
+            <div class="order-info">
+              <span class="order-id">{{ order.id }}</span>
+              <span class="order-date">{{ order.date }}</span>
+            </div>
+            <div class="order-right flex items-center gap-3">
+              <span class="order-total">₹{{ order.total }}</span>
+              <span class="status-badge" [style.background]="getStatusColor(order.status)">
+                {{ order.status }}
+              </span>
+              <span
+                class="material-icons expand-icon"
+                [class.rotated]="expandedOrder() === order.id"
+              >
+                expand_more
+              </span>
+            </div>
+          </div>
+
+          @if (expandedOrder() === order.id) {
+            <div class="order-details">
+              <div class="order-items">
+                @for (item of order.items; track item.product.id) {
+                  <div class="order-item flex items-center justify-between py-2">
+                    <div class="flex items-center gap-3">
+                      <span class="oi-name">{{ item.product.name }}</span>
+                      <span class="oi-qty">×{{ item.quantity }}</span>
+                    </div>
+                    <span class="oi-price">₹{{ item.priceAtPurchase * item.quantity }}</span>
+                  </div>
+                }
+              </div>
+              <div class="order-meta flex flex-wrap gap-4 mt-3">
+                <span class="meta-item">
+                  <span class="material-icons" style="font-size: 14px">payment</span>
+                  {{ order.paymentMethod }}
+                </span>
+                <span class="meta-item">
+                  <span class="material-icons" style="font-size: 14px">location_on</span>
+                  {{ order.address.city }}
+                </span>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

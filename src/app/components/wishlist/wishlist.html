@@ -1,0 +1,64 @@
+<div class="wishlist-page max-w-7xl mx-auto px-4 py-8">
+  <div class="page-header flex items-center justify-between mb-6">
+    <h1 class="page-title">
+      <span class="material-icons">favorite</span>
+      My Wishlist
+      <span class="item-count">({{ wishlistService.count() }} items)</span>
+    </h1>
+    @if (wishlistService.count() > 0) {
+      <button class="move-all-btn" (click)="moveAllToCart()">
+        <span class="material-icons">add_shopping_cart</span>
+        Move All to Cart
+      </button>
+    }
+  </div>
+
+  @if (wishlistService.count() === 0) {
+    <!-- ═══════ Empty State ═══════ -->
+    <div class="empty-state flex flex-col items-center justify-center py-16">
+      <div class="empty-icon">💚</div>
+      <h2 class="empty-title">Your wishlist is empty</h2>
+      <p class="empty-desc">Save items you love by clicking the heart icon on any product.</p>
+      <a routerLink="/" class="shop-btn">
+        <span class="material-icons">arrow_back</span>
+        Explore Products
+      </a>
+    </div>
+  } @else {
+    <!-- ═══════ Wishlist Grid ═══════ -->
+    <div class="wishlist-grid flex flex-wrap gap-6">
+      @for (product of wishlistService.items(); track product.id) {
+        <div class="wishlist-card">
+          <!-- Gradient Image Area -->
+          <div class="wc-image" [style.background]="getGradient(product.category)">
+            <img class="wc-product-img" [src]="product.image" [alt]="product.name" />
+            <span class="wc-discount">-{{ getDiscount(product) }}%</span>
+            <button class="wc-remove" (click)="wishlistService.remove(product.id)" aria-label="Remove from wishlist">
+              <span class="material-icons">close</span>
+            </button>
+          </div>
+
+          <!-- Card Info -->
+          <div class="wc-body">
+            <span class="wc-category">{{ product.category }}</span>
+            <h3 class="wc-name">{{ product.name }}</h3>
+            <p class="wc-tamil">{{ product.tamilName }}</p>
+
+            <div class="wc-price-row flex items-center gap-2 mt-2">
+              <span class="wc-price">₹{{ product.price }}</span>
+              <span class="wc-original">₹{{ product.originalPrice }}</span>
+              <span class="wc-unit">/ {{ product.unit }}</span>
+            </div>
+
+            <div class="wc-actions flex gap-2 mt-3">
+              <button class="move-cart-btn flex-1" (click)="moveToCart(product)">
+                <span class="material-icons">add_shopping_cart</span>
+                Move to Cart
+              </button>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

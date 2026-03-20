@@ -1,0 +1,14 @@
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# build and cache
+/dist
+/.angular
+/.nx
+
+# System files
+.DS_Store
+Thumbs.db

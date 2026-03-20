@@ -1,0 +1,121 @@
+<section class="hero-banner">
+  <div class="hero-overlay"></div>
+  <div class="hero-content flex flex-col items-center justify-center text-center px-4">
+    <span class="hero-badge font-body">🌾 No Maida · Brown Sugar · No Preservatives</span>
+    <h1 class="hero-title font-brand">Freshly Homemade<br/>Healthy Bakes</h1>
+    <p class="hero-subtitle font-body">
+      Delicious cakes and traditional sweets made with love, millet magic, and wholesome ingredients.
+    </p>
+    <div class="hero-stats flex flex-wrap justify-center gap-6 mt-6">
+      <div class="stat-item">
+        <span class="stat-number font-brand">100%</span>
+        <span class="stat-label">Homemade</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number font-brand">0%</span>
+        <span class="stat-label">White Sugar</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-number font-brand">24hr</span>
+        <span class="stat-label">Freshness</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="catalog-section px-4 py-8 max-w-7xl mx-auto">
+  <div class="section-header flex flex-col items-center mb-8">
+    <h2 class="section-title font-brand">Our Menu</h2>
+    <p class="section-subtitle">Baked fresh to order just for you</p>
+  </div>
+
+  <div class="category-bar flex flex-wrap justify-center gap-3 mb-8">
+    @for (cat of categories; track cat) {
+      <button
+        class="category-chip"
+        [class.active]="selectedCategory() === cat"
+        (click)="selectCategory(cat)"
+      >
+        {{ cat }}
+      </button>
+    }
+  </div>
+
+  <div class="product-grid flex flex-wrap justify-center gap-6">
+    @for (product of filteredProducts; track product.id) {
+      <div class="product-card">
+        <div class="card-image-wrapper" [style.background]="getGradient(product)">
+          @if (product.badge) {
+            <span class="card-badge">{{ product.badge }}</span>
+          }
+          <span class="card-discount">-{{ getDiscount(product) }}%</span>
+          <img class="card-image" [src]="product.image" [alt]="product.name" loading="lazy" />
+          <button
+            class="wishlist-btn"
+            [class.wishlisted]="wishlistService.isInWishlist(product.id)"
+            (click)="wishlistService.toggle(product)"
+            aria-label="Toggle wishlist"
+          >
+            <span class="material-icons">
+              {{ wishlistService.isInWishlist(product.id) ? 'favorite' : 'favorite_border' }}
+            </span>
+          </button>
+        </div>
+
+        <div class="card-body">
+          <div class="flex justify-between items-center mb-1">
+            <span class="card-category">{{ product.category }}</span>
+            @if (product.isEgglessAvailable) {
+              <span class="text-xs text-green-600 font-bold flex items-center gap-1">
+                <span class="material-icons" style="font-size: 12px;">eco</span> Eggless Option
+              </span>
+            }
+          </div>
+          <h3 class="card-title font-brand">{{ product.name }}</h3>
+          @if (product.tamilName) {
+            <p class="card-tamil">{{ product.tamilName }}</p>
+          }
+          <p class="card-desc">{{ product.description }}</p>
+          
+          <div class="text-xs text-gray-500 mb-2 flex items-center gap-1">
+            <span class="material-icons" style="font-size: 14px;">schedule</span> 
+            Requires {{ product.preparationTimeDays }} day(s) notice
+          </div>
+
+          <div class="card-rating flex items-center gap-1">
+            @for (s of getStars(product.rating); track $index) {
+              <span class="material-icons star filled">star</span>
+            }
+            @for (s of getEmptyStars(product.rating); track $index) {
+              <span class="material-icons star">star_border</span>
+            }
+            <span class="rating-text">{{ product.rating }}</span>
+            <span class="review-count">({{ product.reviewCount }})</span>
+          </div>
+
+          <div class="card-footer flex items-center justify-between mt-3">
+            <div class="price-group">
+              <span class="current-price">₹{{ product.price }}</span>
+              <span class="original-price">₹{{ product.originalPrice }}</span>
+              <span class="unit-label">/ {{ product.unit }}</span>
+            </div>
+            <button
+              class="add-cart-btn"
+              [class.added]="addedProductId() === product.id"
+              (click)="addToCart(product)"
+              aria-label="Add to cart"
+            >
+              @if (addedProductId() === product.id) {
+                <span class="material-icons">check</span>
+              } @else if (isInCart(product.id)) {
+                <span class="material-icons">shopping_cart</span>
+              } @else {
+                <span class="material-icons">add_shopping_cart</span>
+              }
+            </button>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+</section>

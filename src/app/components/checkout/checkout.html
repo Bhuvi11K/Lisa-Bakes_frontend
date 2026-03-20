@@ -1,0 +1,318 @@
+<div class="checkout-page max-w-7xl mx-auto px-4 py-8">
+  <h1 class="page-title">
+    <span class="material-icons">lock</span>
+    Secure Checkout
+  </h1>
+
+  <!-- ═══════ Step Indicator ═══════ -->
+  <div class="stepper flex items-center justify-center mb-8">
+    <div class="step" [class.active]="currentStep() >= 1" [class.completed]="currentStep() > 1" (click)="goToStep(1)">
+      <div class="step-circle">
+        @if (currentStep() > 1) {
+          <span class="material-icons">check</span>
+        } @else {
+          <span>1</span>
+        }
+      </div>
+      <span class="step-label">Shipping</span>
+    </div>
+    <div class="step-line" [class.active]="currentStep() > 1"></div>
+    <div class="step" [class.active]="currentStep() >= 2" [class.completed]="currentStep() > 2" (click)="goToStep(2)">
+      <div class="step-circle">
+        @if (currentStep() > 2) {
+          <span class="material-icons">check</span>
+        } @else {
+          <span>2</span>
+        }
+      </div>
+      <span class="step-label">Payment</span>
+    </div>
+    <div class="step-line" [class.active]="currentStep() > 2"></div>
+    <div class="step" [class.active]="currentStep() >= 3">
+      <div class="step-circle">
+        @if (orderPlaced()) {
+          <span class="material-icons">check</span>
+        } @else {
+          <span>3</span>
+        }
+      </div>
+      <span class="step-label">Confirmation</span>
+    </div>
+  </div>
+
+  @if (!orderPlaced()) {
+    <div class="checkout-layout flex flex-wrap gap-8">
+      <!-- ═══════ Step Content ═══════ -->
+      <div class="step-content flex-1">
+
+        <!-- ════ Step 1: Shipping ════ -->
+        @if (currentStep() === 1) {
+          <div class="step-panel">
+            <h2 class="step-title">
+              <span class="material-icons">local_shipping</span>
+              Shipping Address
+            </h2>
+
+            <!-- Saved Addresses -->
+            <p class="sub-heading">Select a saved address</p>
+            <div class="saved-addresses flex flex-wrap gap-3 mb-4">
+              @for (addr of savedAddresses; track addr.id) {
+                <div
+                  class="saved-addr-card"
+                  [class.selected]="selectedAddressId() === addr.id && !useNewAddress()"
+                  (click)="selectAddress(addr.id)"
+                >
+                  <div class="sa-label flex items-center gap-1">
+                    <span class="material-icons" style="font-size:16px;">
+                      {{ addr.label === 'Home' ? 'home' : 'work' }}
+                    </span>
+                    {{ addr.label }}
+                    @if (addr.isDefault) {
+                      <span class="sa-default">Default</span>
+                    }
+                  </div>
+                  <p class="sa-name">{{ addr.name }}</p>
+                  <p class="sa-addr">{{ addr.line1 }}, {{ addr.line2 }}</p>
+                  <p class="sa-addr">{{ addr.city }} - {{ addr.pincode }}</p>
+                </div>
+              }
+            </div>
+
+            <button class="new-addr-toggle" (click)="showNewAddressForm()">
+              <span class="material-icons">add</span>
+              Use a new address
+            </button>
+
+            @if (useNewAddress()) {
+              <div class="new-addr-form mt-4">
+                <div class="form-row flex flex-wrap gap-4">
+                  <div class="form-group flex-1">
+                    <label class="form-label">Full Name</label>
+                    <input type="text" class="form-input" [(ngModel)]="shippingForm.name" />
+                  </div>
+                  <div class="form-group flex-1">
+                    <label class="form-label">Phone Number</label>
+                    <input type="tel" class="form-input" [(ngModel)]="shippingForm.phone" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Address Line 1</label>
+                  <input type="text" class="form-input" [(ngModel)]="shippingForm.line1" />
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Address Line 2</label>
+                  <input type="text" class="form-input" [(ngModel)]="shippingForm.line2" />
+                </div>
+                <div class="form-row flex flex-wrap gap-4">
+                  <div class="form-group flex-1">
+                    <label class="form-label">City</label>
+                    <input type="text" class="form-input" [(ngModel)]="shippingForm.city" />
+                  </div>
+                  <div class="form-group flex-1">
+                    <label class="form-label">State</label>
+                    <input type="text" class="form-input" [(ngModel)]="shippingForm.state" />
+                  </div>
+                  <div class="form-group flex-1">
+                    <label class="form-label">Pincode</label>
+                    <input type="text" class="form-input" [(ngModel)]="shippingForm.pincode" />
+                  </div>
+                </div>
+              </div>
+            }
+
+            <div class="step-actions flex justify-between mt-6">
+              <a routerLink="/cart" class="back-link flex items-center gap-1">
+                <span class="material-icons">arrow_back</span> Back to Cart
+              </a>
+              <button class="next-btn" (click)="nextStep()">
+                Continue to Payment <span class="material-icons">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+        }
+
+        <!-- ════ Step 2: Payment ════ -->
+        @if (currentStep() === 2) {
+          <div class="step-panel">
+            <h2 class="step-title">
+              <span class="material-icons">payment</span>
+              Payment Method
+            </h2>
+
+            <div class="payment-options">
+              <!-- UPI -->
+              <label class="payment-option" [class.selected]="selectedPayment() === 'upi'">
+                <input type="radio" name="payment" value="upi" [checked]="selectedPayment() === 'upi'" (change)="selectedPayment.set('upi')" />
+                <div class="po-content flex items-center gap-3">
+                  <span class="po-icon">📱</span>
+                  <div>
+                    <span class="po-title">UPI</span>
+                    <span class="po-desc">Google Pay, PhonePe, Paytm</span>
+                  </div>
+                </div>
+              </label>
+
+              @if (selectedPayment() === 'upi') {
+                <div class="payment-form">
+                  <div class="form-group">
+                    <label class="form-label">UPI ID</label>
+                    <input type="text" class="form-input" placeholder="yourname@upi" [(ngModel)]="upiId" />
+                  </div>
+                </div>
+              }
+
+              <!-- Credit/Debit Card -->
+              <label class="payment-option" [class.selected]="selectedPayment() === 'card'">
+                <input type="radio" name="payment" value="card" [checked]="selectedPayment() === 'card'" (change)="selectedPayment.set('card')" />
+                <div class="po-content flex items-center gap-3">
+                  <span class="po-icon">💳</span>
+                  <div>
+                    <span class="po-title">Credit / Debit Card</span>
+                    <span class="po-desc">Visa, Mastercard, RuPay</span>
+                  </div>
+                </div>
+              </label>
+
+              @if (selectedPayment() === 'card') {
+                <div class="payment-form">
+                  <div class="form-group">
+                    <label class="form-label">Card Number</label>
+                    <input type="text" class="form-input" placeholder="1234 5678 9012 3456" [(ngModel)]="cardForm.number" />
+                  </div>
+                  <div class="form-row flex flex-wrap gap-4">
+                    <div class="form-group flex-1">
+                      <label class="form-label">Card Holder Name</label>
+                      <input type="text" class="form-input" [(ngModel)]="cardForm.name" />
+                    </div>
+                    <div class="form-group" style="width: 120px;">
+                      <label class="form-label">Expiry</label>
+                      <input type="text" class="form-input" placeholder="MM/YY" [(ngModel)]="cardForm.expiry" />
+                    </div>
+                    <div class="form-group" style="width: 100px;">
+                      <label class="form-label">CVV</label>
+                      <input type="password" class="form-input" placeholder="***" [(ngModel)]="cardForm.cvv" />
+                    </div>
+                  </div>
+                </div>
+              }
+
+              <!-- Net Banking -->
+              <label class="payment-option" [class.selected]="selectedPayment() === 'netbanking'">
+                <input type="radio" name="payment" value="netbanking" [checked]="selectedPayment() === 'netbanking'" (change)="selectedPayment.set('netbanking')" />
+                <div class="po-content flex items-center gap-3">
+                  <span class="po-icon">🏦</span>
+                  <div>
+                    <span class="po-title">Net Banking</span>
+                    <span class="po-desc">All major banks supported</span>
+                  </div>
+                </div>
+              </label>
+
+              <!-- Cash on Delivery -->
+              <label class="payment-option" [class.selected]="selectedPayment() === 'cod'">
+                <input type="radio" name="payment" value="cod" [checked]="selectedPayment() === 'cod'" (change)="selectedPayment.set('cod')" />
+                <div class="po-content flex items-center gap-3">
+                  <span class="po-icon">💵</span>
+                  <div>
+                    <span class="po-title">Cash on Delivery</span>
+                    <span class="po-desc">Pay when you receive your order</span>
+                  </div>
+                </div>
+              </label>
+            </div>
+
+            <div class="step-actions flex justify-between mt-6">
+              <button class="back-btn flex items-center gap-1" (click)="prevStep()">
+                <span class="material-icons">arrow_back</span> Back
+              </button>
+              <button class="next-btn place-order-btn" (click)="placeOrder()">
+                Place Order — ₹{{ cartService.grandTotal() }}
+                <span class="material-icons">arrow_forward</span>
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- ═══════ Order Summary Sidebar ═══════ -->
+      <div class="order-sidebar">
+        <h3 class="sidebar-title">Order Summary</h3>
+
+        <div class="sidebar-items">
+          @for (item of cartService.cartItems(); track item.product.id) {
+            <div class="sidebar-item flex items-center gap-3">
+              <span class="si-qty-badge">{{ item.quantity }}</span>
+              <div class="si-info flex-1">
+                <span class="si-name">{{ item.product.name }}</span>
+                <span class="si-unit">{{ item.product.unit }}</span>
+              </div>
+              <span class="si-price">₹{{ item.product.price * item.quantity }}</span>
+            </div>
+          }
+        </div>
+
+        <div class="sidebar-divider"></div>
+
+        <div class="sidebar-row flex justify-between">
+          <span>Subtotal</span><span>₹{{ cartService.subtotal() }}</span>
+        </div>
+        @if (cartService.couponApplied()) {
+          <div class="sidebar-row flex justify-between text-green">
+            <span>Coupon (LISA20)</span><span>-₹{{ cartService.couponDiscount() }}</span>
+          </div>
+        }
+        <div class="sidebar-row flex justify-between">
+          <span>Delivery</span>
+          <span>{{ cartService.deliveryCharge() === 0 ? 'FREE' : '₹' + cartService.deliveryCharge() }}</span>
+        </div>
+        <div class="sidebar-row flex justify-between">
+          <span>GST (5%)</span><span>₹{{ cartService.gst() }}</span>
+        </div>
+        <div class="sidebar-divider accent"></div>
+        <div class="sidebar-total flex justify-between">
+          <span>Total</span><span>₹{{ cartService.grandTotal() }}</span>
+        </div>
+      </div>
+    </div>
+  } @else {
+    <!-- ═══════ Order Confirmation ═══════ -->
+    <div class="confirmation flex flex-col items-center py-12">
+      <div class="success-animation">
+        <div class="success-circle">
+          <span class="material-icons success-check">check</span>
+        </div>
+      </div>
+      <h2 class="confirm-title">Order Placed Successfully! 🎉</h2>
+      <p class="confirm-subtitle">Thank you for shopping with Lisa Bakes</p>
+
+      <div class="order-card-confirm">
+        <div class="occ-row flex justify-between">
+          <span class="occ-label">Order ID</span>
+          <span class="occ-value">{{ orderId() }}</span>
+        </div>
+        <div class="occ-row flex justify-between">
+          <span class="occ-label">Payment</span>
+          <span class="occ-value">{{ getPaymentLabel() }}</span>
+        </div>
+        <div class="occ-row flex justify-between">
+          <span class="occ-label">Estimated Delivery</span>
+          <span class="occ-value">3-5 Business Days</span>
+        </div>
+      </div>
+
+      <p class="confirm-info">
+        <span class="material-icons" style="font-size: 16px;">email</span>
+        A confirmation email has been sent to your registered email address.
+      </p>
+
+      <div class="confirm-actions flex gap-4 mt-4">
+        <button class="primary-btn" (click)="goHome()">
+          <span class="material-icons">home</span> Continue Shopping
+        </button>
+        <a routerLink="/profile" class="secondary-btn flex items-center gap-1">
+          <span class="material-icons">receipt_long</span> View Orders
+        </a>
+      </div>
+    </div>
+  }
+</div>

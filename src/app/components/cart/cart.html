@@ -1,0 +1,157 @@
+<div class="cart-page max-w-7xl mx-auto px-4 py-8">
+  <h1 class="page-title font-brand">
+    <span class="material-icons">shopping_cart</span>
+    Shopping Cart
+    <span class="item-count font-body">({{ cartService.cartCount() }} items)</span>
+  </h1>
+
+  @if (cartService.cartItems().length === 0) {
+    <div class="empty-cart flex flex-col items-center justify-center py-16">
+      <div class="empty-icon">🧁</div>
+      <h2 class="empty-title font-brand">Your cart is empty</h2>
+      <p class="empty-desc">Looks like you haven't added anything yet. Explore our fresh healthy bakes!</p>
+      <a routerLink="/" class="continue-btn">
+        <span class="material-icons">arrow_back</span>
+        View Menu
+      </a>
+    </div>
+  } @else {
+    <div class="cart-layout flex flex-wrap gap-8">
+      <div class="cart-items-section flex-1">
+        @for (item of cartService.cartItems(); track item.product.id) {
+          <div class="cart-item flex gap-4">
+            <div class="item-image" [style.background]="getGradient(item.product.category)">
+              <img class="item-product-img" [src]="item.product.image" [alt]="item.product.name" />
+            </div>
+
+            <div class="item-details flex-1">
+              <div class="item-header flex justify-between items-start">
+                <div>
+                  <h3 class="item-name font-brand">{{ item.product.name }}</h3>
+                  <p class="item-tamil">{{ item.product.tamilName }}</p>
+                  <span class="item-unit">{{ item.selectedWeight ? item.selectedWeight + ' kg' : item.product.unit }}</span>
+                  
+                  <div class="text-xs text-gray-500 mt-1 flex flex-col gap-1">
+                    @if(item.isEggless) { <span class="text-green-600 font-semibold flex items-center gap-1"><span class="material-icons" style="font-size: 12px;">eco</span> Eggless</span> }
+                    @if(item.customMessage) { <span>Message: "{{ item.customMessage }}"</span> }
+                  </div>
+                </div>
+                <button class="remove-btn" (click)="cartService.removeFromCart(item.product.id)" aria-label="Remove item">
+                  <span class="material-icons">close</span>
+                </button>
+              </div>
+
+              <div class="item-bottom flex items-center justify-between mt-3">
+                <div class="qty-stepper flex items-center gap-0">
+                  <button class="qty-btn" (click)="cartService.decrementQuantity(item.product.id)">
+                    <span class="material-icons">remove</span>
+                  </button>
+                  <span class="qty-value">{{ item.quantity }}</span>
+                  <button class="qty-btn" (click)="cartService.incrementQuantity(item.product.id)">
+                    <span class="material-icons">add</span>
+                  </button>
+                </div>
+
+                <div class="item-price-group">
+                  <span class="item-price">₹{{ item.product.price * item.quantity }}</span>
+                  @if (item.quantity > 1) {
+                    <span class="item-unit-price">₹{{ item.product.price }} each</span>
+                  }
+                </div>
+              </div>
+            </div>
+          </div>
+        }
+
+        <a routerLink="/" class="keep-shopping flex items-center gap-1">
+          <span class="material-icons">arrow_back</span>
+          Add more items
+        </a>
+      </div>
+
+      <div class="order-summary">
+        <h2 class="summary-title font-brand">Order Summary</h2>
+
+        <div class="summary-row flex justify-between">
+          <span>Subtotal ({{ cartService.cartCount() }} items)</span>
+          <span>₹{{ cartService.subtotal() }}</span>
+        </div>
+
+        <div class="summary-row savings flex justify-between">
+          <span>You Save</span>
+          <span class="text-green">-₹{{ cartService.savings() }}</span>
+        </div>
+
+        @if (cartService.couponApplied()) {
+          <div class="summary-row coupon-applied flex justify-between">
+            <span class="flex items-center gap-1">
+              <span class="material-icons" style="font-size: 16px;">local_offer</span>
+              LISA20
+              <button class="remove-coupon" (click)="removeCoupon()">✕</button>
+            </span>
+            <span class="text-green">-₹{{ cartService.couponDiscount() }}</span>
+          </div>
+        }
+
+        <div class="summary-row flex justify-between">
+          <span>Delivery</span>
+          @if (cartService.deliveryCharge() === 0) {
+            <span class="text-green">FREE</span>
+          } @else {
+            <span>₹{{ cartService.deliveryCharge() }}</span>
+          }
+        </div>
+
+        <div class="summary-row flex justify-between">
+          <span>GST (5%)</span>
+          <span>₹{{ cartService.gst() }}</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-total flex justify-between">
+          <span>Grand Total</span>
+          <span>₹{{ cartService.grandTotal() }}</span>
+        </div>
+
+        @if (!cartService.couponApplied()) {
+          <div class="coupon-section">
+            <div class="coupon-input-group flex gap-2">
+              <input
+                type="text"
+                [(ngModel)]="couponInput"
+                placeholder="Enter coupon code"
+                class="coupon-input flex-1"
+              />
+              <button class="coupon-btn" (click)="applyCoupon()">Apply</button>
+            </div>
+            @if (couponError()) {
+              <p class="coupon-error">{{ couponError() }}</p>
+            }
+            <p class="coupon-hint">Try: LISA20 for 20% off</p>
+          </div>
+        }
+
+        <button class="checkout-btn" (click)="proceedToCheckout()">
+          Proceed to Checkout
+          <span class="material-icons">arrow_forward</span>
+        </button>
+
+        <div class="trust-badges flex flex-wrap justify-center gap-4 mt-4">
+          <div class="trust-item flex items-center gap-1">
+            <span class="material-icons" style="font-size: 16px; color: var(--color-primary);">cake</span>
+            <span>Freshly Baked</span>
+          </div>
+          <div class="trust-item flex items-center gap-1">
+            <span class="material-icons" style="font-size: 16px; color: var(--color-primary);">eco</span>
+            <span>100% Natural</span>
+          </div>
+          <div class="trust-item flex items-center gap-1">
+            <span class="material-icons" style="font-size: 16px; color: var(--color-primary);">verified_user</span>
+            <span>Secure</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  }
+</div>
