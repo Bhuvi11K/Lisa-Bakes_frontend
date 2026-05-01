@@ -1,4 +1,6 @@
-/* ─── Footer ─── */
+$hover-transition: all 0.3s ease;
+$text-muted: rgba(255, 255, 255, 0.6);
+
 .footer {
   background: var(--color-bg-dark);
   color: rgba(255, 255, 255, .8);
@@ -107,5 +109,69 @@
 
   .social-links {
     justify-content: center;
+  }
+}
+
+.dev-credit {
+  text-align: center;
+
+  .dev-accent-line {
+    width: 48px;
+    height: 2px;
+    background: linear-gradient(90deg, #D4AF37, #ffffff);
+    border-radius: 2px;
+    margin-bottom: 4px;
+  }
+
+  .dev-text {
+    font-size: 0.85rem;
+    color: #fdf0e9;
+    margin: 0;
+    letter-spacing: 0.3px;
+
+    .heart {
+      color: #EF4444;
+      font-size: 1rem;
+      display: inline-block;
+      animation: heartbeat 1.5s ease-in-out infinite;
+    }
+
+    .dev-name {
+      color: #D4AF37;
+      font-weight: 600;
+      text-decoration: none;
+      transition: $hover-transition;
+
+      &:hover {
+        color: lighten(#D4AF37, 15%);
+        text-decoration: underline;
+        text-underline-offset: 3px;
+      }
+    }
+
+    .dev-separator {
+      margin: 0 8px;
+      color: rgba(148, 163, 184, 0.3);
+    }
+
+    .dev-contact {
+      color: $text-muted;
+      text-decoration: none;
+      font-weight: 500;
+      transition: $hover-transition;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+
+      .wa-icon {
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+
+      &:hover {
+        color: #D4AF37;
+      }
+    }
   }
 }

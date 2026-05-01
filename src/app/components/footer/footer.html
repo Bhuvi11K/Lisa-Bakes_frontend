@@ -96,7 +96,34 @@
     </div>
   </div>
 
-  <div class="footer-bottom flex items-center justify-center py-4 px-6">
-    <p>© 2026 Lisa Bakes — All Rights Reserved. Made with 🤎 in Tamil Nadu</p>
+  <!-- Bottom bar -->
+  <div class="footer-bottom">
+    <div class="container flex flex-col md:flex-row items-center justify-between gap-3 py-4 px-6">
+      <p class="copyright">© {{ currentYear }} Lisa Bakes — All Rights Reserved.</p>
+
+      <!-- Developer Credit -->
+      <div class="dev-credit flex flex-col items-center gap-2">
+        <div class="dev-accent-line"></div>
+        <p class="dev-text">
+          Crafted with <span class="heart">&hearts;</span> by
+          <a
+            href="https://www.linkedin.com/in/bhuvanesh11"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="dev-name"
+            >Bhuvanesh</a
+          >
+          <span class="dev-separator">|</span>
+          <a
+            href="https://bhuvanesh-dev.vercel.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="dev-contact"
+          >
+            Let's Build Your Vision &rarr;
+          </a>
+        </p>
+      </div>
+    </div>
   </div>
 </footer>
