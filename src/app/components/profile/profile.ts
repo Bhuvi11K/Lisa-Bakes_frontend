@@ -17,7 +17,7 @@ export class Profile {
   protected user: UserProfile = {
     name: 'Bhuvanesh K',
     email: 'bhuvanesh@Lisa Bakes.in',
-    phone: '+91 82207 99679',
+    phone: '+91 82489 82196',
     avatar: '',
     memberSince: 'January 2025',
   };
@@ -28,7 +28,7 @@ export class Profile {
     {
       id: 1,
       name: 'Bhuvanesh K',
-      phone: '+91 82207 99679',
+      phone: '+91 82489 82196',
       line1: '42, Gandhipuram',
       line2: 'Near RS Puram Bus Stop',
       city: 'Coimbatore',
@@ -40,7 +40,7 @@ export class Profile {
     {
       id: 2,
       name: 'Bhuvanesh K',
-      phone: '+91 82207 99679',
+      phone: '+91 882489 82196',
       line1: 'Tech Park, 3rd Floor',
       line2: 'Saravanampatti',
       city: 'Coimbatore',
@@ -68,7 +68,7 @@ export class Profile {
           customMessage: 'Happy Birthday!'
         }
       ],
-      total: 850, 
+      total: 850,
       status: 'Delivered', // Updated status
       date: '15 Mar 2026',
       requestedDeliveryDate: '16 Mar 2026',
@@ -89,7 +89,7 @@ export class Profile {
           priceAtPurchase: 250
         }
       ],
-      total: 500, 
+      total: 500,
       status: 'Baking', // Updated status
       date: '19 Mar 2026',
       address: {
