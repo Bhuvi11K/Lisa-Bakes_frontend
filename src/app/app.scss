@@ -3,3 +3,11 @@
    ═══════════════════════════════════════════════ */
 
 /* Global app-level styles can go here */
+
+/* Account for fixed mobile bottom navbar */
+@media (max-width: 768px) {
+  :host {
+    display: block;
+    padding-bottom: 72px;
+  }
+}

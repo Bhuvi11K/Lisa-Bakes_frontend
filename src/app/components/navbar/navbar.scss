@@ -123,13 +123,101 @@
   justify-content: center;
 }
 
+/* ─── Mobile Bottom Nav (hidden on desktop) ─── */
+.mobile-bottom-nav {
+  display: none;
+}
+
 /* ─── Responsive ─── */
 @media (max-width: 768px) {
   .search-bar {
     display: none;
   }
 
-  .nav-label {
+  /* Hide the entire desktop nav-actions on mobile */
+  .desktop-nav {
     display: none;
+  }
+
+  /* ─── Fixed Bottom Navigation Bar ─── */
+  .mobile-bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: var(--color-bg-card);
+    box-shadow: 0 -2px 16px rgba(44, 30, 30, .1);
+    padding: .5rem 0 calc(.5rem + env(safe-area-inset-bottom, 0px)) 0;
+    border-top: 1px solid rgba(155, 89, 91, .1);
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    flex: 1;
+    text-decoration: none;
+    color: var(--color-text-light);
+    font-size: .65rem;
+    font-weight: 500;
+    padding: .35rem 0;
+    position: relative;
+    transition: color .2s ease;
+
+    .material-icons {
+      font-size: 22px;
+      transition: color .2s ease, transform .2s ease;
+    }
+
+    &:hover,
+    &.active {
+      color: var(--color-primary);
+
+      .material-icons {
+        color: var(--color-primary);
+        transform: scale(1.1);
+      }
+    }
+
+    &.active::before {
+      content: '';
+      position: absolute;
+      top: -0.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 28px;
+      height: 3px;
+      border-radius: 0 0 4px 4px;
+      background: var(--color-primary);
+    }
+  }
+
+  .mobile-nav-label {
+    font-family: var(--font-body);
+    letter-spacing: .2px;
+  }
+
+  .mobile-cart-badge {
+    position: absolute;
+    top: 0;
+    right: 50%;
+    transform: translateX(calc(50% + 10px));
+    background: var(--color-primary);
+    color: #fff;
+    font-size: .6rem;
+    font-weight: 700;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
   }
 }

@@ -17,7 +17,7 @@
     <input type="text" placeholder="Search millet cakes, coconut burfi, rava laddu..." class="search-input" />
   </div>
 
-  <div class="nav-actions flex items-center gap-4">
+  <div class="nav-actions desktop-nav flex items-center gap-4">
     
     <a class="nav-link flex items-center gap-1" routerLink="/" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active">
       <span class="material-icons">storefront</span>
@@ -60,4 +60,37 @@
       </a>
     }
   </div>
+</nav>
+
+<!-- ═══════ Mobile Bottom Navigation ═══════ -->
+<nav class="mobile-bottom-nav">
+  <a class="mobile-nav-item" routerLink="/" [routerLinkActiveOptions]="{exact: true}" routerLinkActive="active">
+    <span class="material-icons">storefront</span>
+    <span class="mobile-nav-label">Menu</span>
+  </a>
+
+  <a class="mobile-nav-item" routerLink="/wishlist" routerLinkActive="active">
+    <span class="material-icons">favorite_border</span>
+    <span class="mobile-nav-label">Wishlist</span>
+  </a>
+
+  <a class="mobile-nav-item" routerLink="/cart" routerLinkActive="active">
+    <span class="material-icons">shopping_cart</span>
+    <span class="mobile-nav-label">Cart</span>
+    @if (cartService.cartCount() > 0) {
+      <span class="mobile-cart-badge">{{ cartService.cartCount() }}</span>
+    }
+  </a>
+
+  @if (authService.isLoggedIn()) {
+    <a class="mobile-nav-item" routerLink="/profile" routerLinkActive="active">
+      <span class="material-icons">person_outline</span>
+      <span class="mobile-nav-label">Account</span>
+    </a>
+  } @else {
+    <a class="mobile-nav-item" routerLink="/login" routerLinkActive="active">
+      <span class="material-icons">login</span>
+      <span class="mobile-nav-label">Login</span>
+    </a>
+  }
 </nav>
